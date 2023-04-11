@@ -19,6 +19,7 @@ or a release build for the same domain,
 gmake manufacturing-stl-release
 ```
 
+
 As above, the name of any of the other listed domains may be substituted for
 `manufacturing`.
 
@@ -51,10 +52,34 @@ taking the variable names from `chronicle serve-api --help`. Then, after you
 use `gmake run-my-domain` or similar, the running Chronicle will use the
 specified authentication provider to verify incoming requests.
 
-## Setting up your own domain
+## Generate the GraphQL Schema
 
-This repository follows the same structure as the [Chronicle Examples](https://github.com/chronicleworks/chronicle-examples)
-repository, which you can use for reference.
+Integration with Chronicle is primarily done through GraphQL. The GraphQL schema
+is specific to the domain and is generated from the domain.yaml file. To generate
+the GraphQL schema for your domain, simply run `gmake <domain>-sdl`. For example,
+for the manufacturing domain:
+
+```bash
+gmake manufacturing-sdl
+```
+
+## Understanding the Makefile targets and Docker images
+
+As described above, Chronicle can be built either
+[with an in-memory ledger or backed by Sawtooth](#run-a-standalone-node).
+These have `inmem` or `stl` in their image name, respectively. Also, it can be
+built  either as [a debug or a release
+build](#deploy-to-a-chronicle-on-sawtooth-environment). The former suffixes
+image names with `-debug`, the latter with `-release`.
+
+The `gmake build` target builds the in-memory release images for every example
+domain. For Sawtooth-backed release builds, use `gmake stl-release` instead.
+
+The `run-*` targets build debug versions, other targets typically build
+release builds. Debug builds the code much faster for incremental changes but
+this advantage is irrelevant when each build is done in a fresh Docker
+container. Therefore, the better-optimized release builds are typically
+recommended.
 
 To build any specific Docker image, use the form `gmake A-B-C` where,
 
@@ -70,12 +95,11 @@ C
 which builds and tags an image named `chronicle-A-B-C`. The previous
 `chronicle-A-B` tag names are deprecated.
 
-
-## GraphQL Client
+## Using the GraphQL Client
 
 Chronicle Examples use Chronicle's `serve-graphql` function to provide the
-Chronicle GraphQL API. By using a GraphQL client, you can interact with Chronicle
-by running GraphQL queries, mutations, and subscriptions.
+Chronicle GraphQL API. By using a GraphQL client, you can interact with
+Chronicle by running GraphQL queries, mutations, and subscriptions.
 
 We recommend using the [Altair GraphQL Client](https://altairgraphql.dev/),
 which is available as a free desktop GraphQL IDE or web browser extension.
@@ -91,21 +115,13 @@ therefore running the same browser on the same machine will preserves all your
 queries and tab positions, simplifying resubmittng them if you are iterating on
 an idea for example.
 
-To add a new mutation or query tab, there is a `+` on the right-hand side of the tab bar.
-
-Once you get to this point, you are ready to explore the examples. To do this,
-refer to the relevant guide.
-
-### Notes
-
-If you are using Chronicle with default settings, point your GraphQL client or
-browser <http://127.0.0.1:9982>.
+To add a new mutation or query tab, there is a `+` on the right-hand side of the
+tab bar. Don't forget to use Shift-R to refresh your client before rerunning an
+example.
 
 In the case of the GraphQL Playground, the *SCHEMA* and *DOCS* tabs make it
 easy to explore the relationship between your `domain.yaml` configuration and
 the resulting strongly-typed Chronicle GraphQL API.
-
-__NOTE__ Use Shift-R to refresh the playground before rerunning your example.
 
 ### Subscribing to Events (1)
 
@@ -128,11 +144,10 @@ subscription {
 
 ### Subscribing to Events (2)
 
-
 If you are using JWT authorization you will need to install a GraphQL client
 that supports subscriptions correctly by passing the `Authorization` header.
 
-Neither the Altair GraphQL Client or the GraphQL Playground support this.
+Neither the Altair GraphQL Client nor the GraphQL Playground support this.
 However, we have verified that the CLI
 [gql-cli](https://gql.readthedocs.io/en/latest/gql-cli/intro.html)
 included in [GQL 3](https://gql.readthedocs.io/en/latest/intro.html) handles
@@ -142,10 +157,14 @@ this gracefully. To install this use `pip`:
 pip install "gql[all]"
 ```
 
-Once installed you can run the same subscription using `gql-cli`. To faciliate
-this we provide a script [subscription.sh](./scripts/subscription.sh). Simply
-run this and respond to the prompts. If you haven't locked down your
-environment using JWT the bearer token will be ignored.
+Once `gql-cli` is installed you can use it to run the same subscription. To
+faciliate this we have provided a script [subscription.sh](./scripts/subscription.sh).
+
+We recommend that you run this script first, then experiment with mutations and
+queries using your preferred GraphQL client.
+
+__NOTE__ If you haven't locked down your environment using JWT, the bearer token
+will be ignored.
 
 ## Adding a Domain
 
