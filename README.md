@@ -9,55 +9,36 @@ It does not contain an example domain, however if you would like to test it,
 you can use a domain from the
 [Chronicle Examples](https://github.com/chronicleworks/chronicle-examples) repo.
 
-For example, for a debug build of the manufacturing domain,
+For example, the [manufacturing domain](https://github.com/btpworks/chronicle-examples/blob/main/domains/manufacturing/domain.yaml).
 
-```bash
-gmake manufacturing-stl-debug
-```
-or a release build for the same domain,
-```
-gmake manufacturing-stl-release
-```
+## Chronicle Documentation
 
+Documentation for Chronicle in general may be found [here](https://docs.btp.works/chronicle/).
+Example domains may be found [here](https://examples.btp.works).
 
-As above, the name of any of the other listed domains may be substituted for
-`manufacturing`.
+## Setting up your own domain
 
-After the build, running `docker image ls` should show the built image that
-can then be pushed to the appropriate registry for installation.
+This repository follows the same structure as the [Chronicle Examples](https://github.com/btpworks/chronicle-examples)
+repository, which you can use for reference.
 
-By default, the images are given tags like, say,
-`chronicle-manufacturing-stl-release:local`. A value other than `local` can
-be set in the `ISOLATION_ID` environment variable prior to build.
+To get started with Chronicle Bootstrap:
 
-### Set Environment Variables
+1. Clone this repo, or download it as a zip file from GitHub
+   [here](https://github.com/btpworks/chronicle-bootstrap/archive/refs/heads/main.zip).
+   *Please note, if you download or copy the repo rather than cloning it,
+   you will need to make sure you keep it up to date with the latest Chronicle
+   releases in the future.*
+1. Add your `domain.yaml` file in its own directory inside the `domains`
+   directory. The name of its directory should be the name of your domain. For
+   example, if your domain is called `manufacturing`, you would create
+   `domains/manufacturing/domain.yaml`.
 
-Additional environment variables can be set that are recogized by the running
-Chronicle process. You may list these in the `docker/chronicle-environment`
-file which is initially empty. To instead read them from a different file,
-set its location in the `DOCKER_COMPOSE_ENV` environment variable.
+## Running your domain
 
-For example, to have Chronicle require all API requests to be
-authenticated, you could write your authentication provider's
-[OIDC endpoints](https://docs.chronicle.works/auth/) into
-`docker/chronicle-environment` thus,
-
-```properties
-REQUIRE_AUTH=1
-JWKS_URI=https://id.example.com:80/.well-known/jwks.json
-USERINFO_URI=https://id.example.com:80/userinfo
-```
-
-taking the variable names from `chronicle serve-api --help`. Then, after you
-use `gmake run-my-domain` or similar, the running Chronicle will use the
-specified authentication provider to verify incoming requests.
-
-## Generate the GraphQL Schema
-
-Integration with Chronicle is primarily done through GraphQL. The GraphQL schema
-is specific to the domain and is generated from the domain.yaml file. To generate
-the GraphQL schema for your domain, simply run `gmake <domain>-sdl`. For example,
-for the manufacturing domain:
+You can run your domain locally using the Makefile.
+This will use a standalone version of Chronicle which is a single node with a
+local database rather than backed by a blockchain. Replace `manufacturing` with
+the name of your domain.
 
 ```bash
 gmake manufacturing-sdl
