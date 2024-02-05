@@ -115,6 +115,7 @@ can subscribe to events in one of the tabs by using the subscription URL
 subscription {
   commitNotifications {
     stage
+    txId
     error
     delta
   }
