@@ -99,17 +99,19 @@ refer to the relevant guide.
 If you are using Chronicle on default settings, point the GraphQL client to
 <http://127.0.0.1:9982>.
 
-The *SCHEMA* and *DOCS* tabs are useful for showing the relationship between
-your `domain.yaml` configuration and the resulting Chronicle API.
 
-Shift-refresh on the playground will remove previous results from query tabs,
-which is recommended before rerunning your example.
+In the case of the GraphQL Playground the *SCHEMA* and *DOCS* tabs are useful
+for showing the relationship between your `domain.yaml` configuration and the
+resulting Chronicle API.
 
-### Subscribe to Events
+__NOTE__ Use Shift-R to refresh the playground before rerunning your example.
+
+### Subscribing to Events (1)
 
 Finally, to see what is happening as you run GraphQL mutations and queries, you
-can subscribe to events in one of the tabs by using the subscription URL
-<ws://localhost:9982/ws>.
+can subscribe to async events in one of the tabs. The GraphQL Playround handles
+this automatically but other GraphQL clients may ask you to explicitly provide
+the websocket end point. The default is <ws://localhost:9982/ws>.
 
 ```graphql
 subscription {
@@ -121,6 +123,16 @@ subscription {
   }
 }
 ```
+
+
+__NOTE__ that if you are using JWT authorization you will need to install the
+a GraphQL client that supports subscriptions in this scenario. We have verified
+that [GQL 3](https://gql.readthedocs.io/en/latest/intro.html) works.
+
+Once installed you can run the same subscription using `gql-cli`. To faciliate
+this we provide a script [subscription.sh](./scripts/subscription.sh). Simply
+run this and respond to the prompts. If you haven't locked down your
+environment using JWT the bearer token will be ignored.
 
 ## Adding a Domain
 
