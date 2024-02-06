@@ -70,8 +70,8 @@ C
 which builds and tags an image named `chronicle-A-B-C`. The previous
 `chronicle-A-B` tag names are deprecated.
 
-## GraphQL Client
 
+## GraphQL Client
 
 Chronicle Examples use Chronicle's `serve-graphql` function to provide the
 Chronicle GraphQL API. By using a GraphQL client, you can interact with Chronicle
@@ -82,36 +82,38 @@ which is available as a free desktop GraphQL IDE or web browser extension.
 
 If you have previously used Chronicle Examples, you can still access the
 [GraphQL Playground](https://github.com/graphql/graphql-playground) through your
-web browser at <http://127.0.0.1:9982>, however we will be deprecating support
-for GraphQL Playground in future releases.
+web browser at <http://127.0.0.1:9982>, unless you are using port forwarding
+or an ingress. However we will be deprecating support for the playground in
+future releases.
 
-Both of these GraphQL clients are persistent via cookies, so running the same
-browser on the same machine will remember all your queries and tab positions.
+Both of the playground and the Altair GraphQL Client are persistent via cookies,
+therefore running the same browser on the same machine will preserves all your
+queries and tab positions, simplifying resubmittng them if you are iterating on
+an idea for example.
 
-To add a new mutation or query tab, there is a `+` on the right-hand side of the
-tab bar.
+To add a new mutation or query tab, there is a `+` on the right-hand side of the tab bar.
 
-Once you get to this point, you are ready to explore the example. To do this,
+Once you get to this point, you are ready to explore the examples. To do this,
 refer to the relevant guide.
 
 ### Notes
 
-If you are using Chronicle on default settings, point the GraphQL client to
-<http://127.0.0.1:9982>.
+If you are using Chronicle with default settings, point your GraphQL client or
+browser <http://127.0.0.1:9982>.
 
-
-In the case of the GraphQL Playground the *SCHEMA* and *DOCS* tabs are useful
-for showing the relationship between your `domain.yaml` configuration and the
-resulting Chronicle API.
+In the case of the GraphQL Playground, the *SCHEMA* and *DOCS* tabs make it
+easy to explore the relationship between your `domain.yaml` configuration and
+the resulting strongly-typed Chronicle GraphQL API.
 
 __NOTE__ Use Shift-R to refresh the playground before rerunning your example.
 
 ### Subscribing to Events (1)
 
-Finally, to see what is happening as you run GraphQL mutations and queries, you
+In order to see what is happening as you run GraphQL mutations and queries, you
 can subscribe to async events in one of the tabs. The GraphQL Playround handles
-this automatically but other GraphQL clients may ask you to explicitly provide
-the websocket end point. The default is <ws://localhost:9982/ws>.
+this automatically upgrading your HTTP connection to a websocket end point.
+However, other GraphQL clients may ask you to explicitly provide this. Again,
+the default is <ws://127.0.0.1:9982/ws>.
 
 ```graphql
 subscription {
@@ -124,10 +126,21 @@ subscription {
 }
 ```
 
+### Subscribing to Events (2)
 
-__NOTE__ that if you are using JWT authorization you will need to install the
-a GraphQL client that supports subscriptions in this scenario. We have verified
-that [GQL 3](https://gql.readthedocs.io/en/latest/intro.html) works.
+
+If you are using JWT authorization you will need to install a GraphQL client
+that supports subscriptions correctly by passing the `Authorization` header.
+
+Neither the Altair GraphQL Client or the GraphQL Playground support this.
+However, we have verified that the CLI
+[gql-cli](https://gql.readthedocs.io/en/latest/gql-cli/intro.html)
+included in [GQL 3](https://gql.readthedocs.io/en/latest/intro.html) handles
+this gracefully. To install this use `pip`:
+
+```bash
+pip install "gql[all]"
+```
 
 Once installed you can run the same subscription using `gql-cli`. To faciliate
 this we provide a script [subscription.sh](./scripts/subscription.sh). Simply
