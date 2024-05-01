@@ -183,7 +183,7 @@ $(1)-stl-release: $(MARKERS)/ensure-context-$(1)-stl-release domains/$(1)/domain
 
 domains/$(1)/chronicle.graphql: $(1)-inmem-release
 	@echo "Generating $(1) GraphQL schema in file: domains/$(1)/chronicle.graphql"
-	@docker run --env RUST_LOG=debug chronicle-$(1)-inmem-release:$(ISOLATION_ID) \
+	@docker run --env RUST_LOG=info chronicle-$(1)-inmem-release:$(ISOLATION_ID) \
 		export-schema > domains/$(1)/chronicle.graphql
 
 .PHONY: clean-graphql-$(1)

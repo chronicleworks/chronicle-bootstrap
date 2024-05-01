@@ -2,7 +2,6 @@
 ARG CHRONICLE_BUILDER_IMAGE=blockchaintp/chronicle-builder-${TARGETARCH}
 ARG CHRONICLE_VERSION=BTP2.1.0-0.7.6
 
-
 FROM ${CHRONICLE_BUILDER_IMAGE}:${CHRONICLE_VERSION} as cache
 ARG RELEASE=no
 ARG FEATURES=""
@@ -51,7 +50,7 @@ RUN if [ "${RELEASE}" = "yes" ]; then \
   fi;
 
 WORKDIR /
-FROM ubuntu:focal AS domain
+FROM ubuntu:jammy AS domain
 
 COPY --from=builder --chown=root:bin /usr/local/bin/chronicle /usr/local/bin
 COPY --chown=root:bin entrypoint /entrypoint
