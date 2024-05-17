@@ -58,7 +58,8 @@ COPY --chown=root:bin entrypoint /entrypoint
 RUN apt-get update && \
   apt-get install -y \
   libpq-dev \
-  ca-certificates
+  ca-certificates \
+  curl
 
 RUN chmod 755 \
   /entrypoint \
