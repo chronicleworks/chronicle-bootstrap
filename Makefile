@@ -3,18 +3,44 @@ include $(MAKEFILE_DIR)/standard_defs.mk
 
 export OPENSSL_STATIC=1
 
-ARCH_TYPE ?= $(shell uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
-HOST_ARCHITECTURE ?= $(shell uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
-TARGET_PLATFORM ?= linux/amd64
+uname_S := $(shell uname -s)
+uname_M := $(shell uname -m)
 
-CHRONICLE_BUILDER_IMAGE ?= blockchaintp/chronicle-builder-$(ARCH_TYPE)
-CHRONICLE_TP_IMAGE ?= blockchaintp/chronicle-tp-$(ARCH_TYPE)
+ifeq ($(uname_S), Linux)
+	HOST_OS = linux
+	OPA_SUFFIX = _static
+else ifeq ($(uname_S), Darwin)
+	HOST_OS = darwin
+else
+	HOST_OS = windows
+	HOST_ARCH = amd64
+endif
+
+ifeq ($(uname_M), x86_64)
+	HOST_ARCH = amd64
+else ifeq ($(uname_M), arm)
+	HOST_ARCH = arm64
+	OPA_SUFFIX = _static
+else ifeq ($(uname_M), arm64)
+	HOST_ARCH = arm64
+	OPA_SUFFIX = _static
+else ifeq ($(uname_M), aarch64)
+	HOST_ARCH = arm64
+	OPA_SUFFIX = _static
+endif
+
+OPA_VERSION=v0.49.2
+OPA_DOWNLOAD_URL=https://openpolicyagent.org/downloads/$(OPA_VERSION)/opa_$(HOST_OS)_$(HOST_ARCH)$(OPA_SUFFIX)
+
+TARGET_ARCH ?= $(HOST_ARCH)
+TARGET_PLATFORM ?= $(HOST_OS)/$(HOST_ARCH)
+
+CHRONICLE_BUILDER_IMAGE ?= blockchaintp/chronicle-builder-$(TARGET_ARCH)
+CHRONICLE_TP_IMAGE ?= blockchaintp/chronicle-tp-$(TARGET_ARCH)
 CHRONICLE_VERSION ?= BTP2.1.0-0.7.9
-
 
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
-
 
 CLEAN_DIRS := $(CLEAN_DIRS)
 
@@ -248,35 +274,6 @@ sdl: $(foreach domain,$(DOMAINS), $(domain)-sdl )
 
 .PHONY: build
 build: sdl
-
-uname_S := $(shell uname -s)
-uname_M := $(shell uname -m)
-
-ifeq ($(uname_S), Linux)
-	OS = linux
-	OPA_SUFFIX = _static
-else ifeq ($(uname_S), Darwin)
-	OS = darwin
-else
-	OS = windows
-	ARCH = amd64
-endif
-
-ifeq ($(uname_M), x86_64)
-	ARCH = amd64
-else ifeq ($(uname_M), arm)
-	ARCH = arm64
-	OPA_SUFFIX = _static
-else ifeq ($(uname_M), arm64)
-	ARCH = arm64
-	OPA_SUFFIX = _static
-else ifeq ($(uname_M), aarch64)
-	ARCH = arm64
-	OPA_SUFFIX = _static
-endif
-
-OPA_VERSION=v0.49.2
-OPA_DOWNLOAD_URL=https://openpolicyagent.org/downloads/$(OPA_VERSION)/opa_$(OS)_$(ARCH)$(OPA_SUFFIX)
 
 build/opa:
 	mkdir -p build

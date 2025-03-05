@@ -10,6 +10,9 @@ policies/bundle.tar.gz
 # vscode
 *.code-workspace
 
+# chronicle domains
+domains/
+
 # chronicle builder
 markers/
 
