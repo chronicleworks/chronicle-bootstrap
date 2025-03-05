@@ -4,8 +4,9 @@ include $(MAKEFILE_DIR)/standard_defs.mk
 export OPENSSL_STATIC=1
 
 ARCH_TYPE ?= $(shell uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
-
 HOST_ARCHITECTURE ?= $(shell uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
+TARGET_PLATFORM ?= linux/amd64
+
 CHRONICLE_BUILDER_IMAGE ?= blockchaintp/chronicle-builder-$(ARCH_TYPE)
 CHRONICLE_TP_IMAGE ?= blockchaintp/chronicle-tp-$(ARCH_TYPE)
 CHRONICLE_VERSION ?= BTP2.1.0-0.7.9
@@ -131,6 +132,7 @@ $(1)-stl-debug:$(MARKERS)/ensure-context-$(1)-stl-debug domains/$(1)/domain.yaml
 	@$(DOCKER_BUILD) -f docker/chronicle.dockerfile \
 		--builder ctx-$(ISOLATION_ID)-sd \
 		--tag chronicle-domain:$(ISOLATION_ID) \
+		--platform $(TARGET_PLATFORM) \
 		--build-arg CHRONICLE_VERSION=$(CHRONICLE_VERSION) \
 		--build-arg CHRONICLE_BUILDER_IMAGE=$(CHRONICLE_BUILDER_IMAGE) \
 		--build-arg RELEASE=no \
@@ -161,6 +163,7 @@ $(1)-stl-release: $(MARKERS)/ensure-context-$(1)-stl-release domains/$(1)/domain
 	@$(DOCKER_BUILD) -f docker/chronicle.dockerfile \
 		--builder ctx-$(ISOLATION_ID)-sr \
 		--tag chronicle-domain:$(ISOLATION_ID) \
+		--platform $(TARGET_PLATFORM) \
 		--build-arg CHRONICLE_VERSION=$(CHRONICLE_VERSION) \
 		--build-arg CHRONICLE_BUILDER_IMAGE=$(CHRONICLE_BUILDER_IMAGE) \
 		--build-arg RELEASE=yes \
